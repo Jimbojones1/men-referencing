@@ -19,9 +19,11 @@ const listingSchema = new mongoose.Schema({
 	  required: true,
 	  min: 0,
 	},
+	// 1 user has many listings,
+	// a listing belongs to a user!
 	owner: {
 		type: mongoose.Schema.Types.ObjectId,
-		ref: 'User',
+		ref: 'User', // belongs to !
 	  }
   });
 
