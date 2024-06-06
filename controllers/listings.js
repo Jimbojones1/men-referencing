@@ -4,6 +4,29 @@ const router = express.Router();
 
 const Listing = require('../models/listing');
 
+
+router.post('/:listingId/favorited-by', async function(req, res){
+	try {
+		// We want add the logged in users id, to the listing.favoritedByUsers array
+		// option 1
+		await Listing.findByIdAndUpdate(req.params.listingId, {
+			// mongodb operator! that lets you modify an array
+			$push: {favoritedByUsers: req.session.user._id}
+		})
+
+		// option 2 
+		// const listingDoc = Listing.findById(req.params.listingId)
+		// listingDoc.favoritedByUsers.push(req.session.user._id)
+		// listingDoc.save();
+		res.redirect(`/listings/${req.params.listingId}`)
+
+	} catch(err){
+		console.log(err)
+		res.redirect('/')
+	}
+})
+
+
 router.delete('/:listingId', async function(req, res){
 	
 	try {
@@ -67,9 +90,21 @@ router.get('/:listingId', async (req, res) => {
 	  const populatedListings = await Listing.findById(
 		req.params.listingId
 	  ).populate('owner');
-  
+	  console.log(populatedListings, ' <- listing on show page!')
+
+	  // we want to figure if the logged in user has favorited the listing!
+	  
+	  // since this reference ids and not embedded, we can't use id method, 
+	  // but can use array methods
+	  const isFavoritedByUser = populatedListings.favoritedByUsers.some((userId) => {
+		// userId is each id in the array, does it equal the logged in users array
+		// .some just looks for a match, and if it finds it returns true and soon as thre is match
+		return userId.equals(req.session.user._id)
+	  })
+
 	  res.render('listings/show.ejs', {
 		listing: populatedListings,
+		isFavoritedByUser: isFavoritedByUser
 	  });
 	} catch (error) {
 	  console.log(error);

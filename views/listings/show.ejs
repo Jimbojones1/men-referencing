@@ -21,7 +21,6 @@
     </p>
     <p>Street address: <%= listing.streetAddress %>
     </p>
-
     <!-- the .equals compars mongo ids, this is from mongoose -->
     <% if (listing.owner._id.equals(user._id)) { %>
 
@@ -29,6 +28,18 @@
         <button>Delete</button>
       </form>
     <% } %>
+
+    <h2>Favorites</h2>
+    <p>Favorited by <%= listing.favoritedByUsers.length %> people.</p>
+
+    <% if (isFavoritedByUser) { %>
+     <p>You have favorited this listing</p>
+    <% } else { %>
+      <form action="/listings/<%= listing._id %>/favorited-by" method="POST">
+        <button type="Submit">Favorite it!</button>
+      </form>
+    <% } %>
+ 
 
 </body>
 

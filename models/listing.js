@@ -24,7 +24,13 @@ const listingSchema = new mongoose.Schema({
 	owner: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'User', // belongs to !
-	  }
+	},
+	// Many users to many listing favorites
+	// MANY TO MANY RELATIONSHIP
+	favoritedByUsers: [{
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'User', // belongs to !
+	}]
   });
 
 const Listing = mongoose.model('Listing', listingSchema);
